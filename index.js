@@ -1,9 +1,11 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
-const generatehtml = require("./generatehtml");
-const internClass = require("./internClass");
-const managerClass = require("./managerClass");
-const engineerClass = require("./engineerClass");
+const Intern = require("./lib/Intern");
+const Manager = require("./lib/Manager");
+const Engineer = require("./lib/Engineer");
+const generatePage = require("./src/generatehtml");
+
+let employees = [];
 
 const init = function () {
   inquirer
@@ -37,10 +39,10 @@ const init = function () {
         data.managerEmail,
         data.managerOffNum
       );
-    });
 
-  whatNext();
-  generatehtml();
+      employees.push(manager);
+      whatNext();
+    });
 };
 
 const whatNext = function () {
@@ -52,11 +54,13 @@ const whatNext = function () {
       choices: ["Add an Engineer?", "Add an Intern?", "Exit?"],
     })
     .then((data) => {
-      if (data.choices === choices[0]) {
+      if (data.addEmp === "Add an Engineer?") {
         enginInput();
-      } else if (data.choices === choices[1]) {
+      } else if (data.addEmp === "Add an Intern?") {
         internInput();
-      } else return;
+      } else {
+        generatehtml();
+      }
     });
 };
 
@@ -82,13 +86,21 @@ const enginInput = function () {
         message: "What is the engineers github?",
         name: "engineerGit",
       },
+      {
+        type: "input",
+        message: "What is the engineers email?",
+        name: "engineerEmail",
+      },
     ])
     .then((data) => {
       const engineer = new Engineer(
         data.engineerName,
         data.engineerID,
+        data.engineerEmail,
         data.engineerGit
       );
+      employees.push(engineer);
+      whatNext();
     });
 };
 
@@ -130,7 +142,18 @@ const internInput = function () {
         data.internEmail,
         data.internSchool
       );
+      employees.push(intern);
+      whatNext();
     });
 };
 
 // when we hav finished entering this information for the intern then return to the prompts so we can add more teammates or exit.
+
+const generatehtml = function () {
+  fs.writeFile("index.HTML", generatePage(employees), (err) =>
+    err ? console.log(err) : console.log("Success!")
+  );
+  ß;
+};
+
+init();
