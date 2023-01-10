@@ -15,22 +15,32 @@ const init = function () {
       },
       {
         type: "input",
-        message: "What is the employee ID?",
-        name: "empID",
+        message: "What is the team managers ID?",
+        name: "managerID",
       },
       {
         type: "input",
-        message: "What is the email address?",
-        name: "emailId",
+        message: "What is the team managers email address?",
+        name: "managerEmail",
       },
       {
         type: "input",
-        message: "What is the office number?",
-        name: "officeNum",
+        message: "What is the team managers office number?",
+        name: "managerOffNum",
       },
     ])
 
-    .then(data);
+    .then((data) => {
+      const manager = new Manager(
+        data.managerName,
+        data.managerID,
+        data.managerEmail,
+        data.managerOffNum
+      );
+    });
+
+  whatNext();
+  generatehtml();
 };
 
 const whatNext = function () {
@@ -41,7 +51,13 @@ const whatNext = function () {
       name: "addEmp",
       choices: ["Add an Engineer?", "Add an Intern?", "Exit?"],
     })
-    .then(data);
+    .then((data) => {
+      if (data.choices === choices[0]) {
+        enginInput();
+      } else if (data.choices === choices[1]) {
+        internInput();
+      } else return;
+    });
 };
 
 //if selected exit then exit the promts
@@ -67,7 +83,13 @@ const enginInput = function () {
         name: "engineerGit",
       },
     ])
-    .then(data);
+    .then((data) => {
+      const engineer = new Engineer(
+        data.engineerName,
+        data.engineerID,
+        data.engineerGit
+      );
+    });
 };
 
 // when we have finished entering this information for the engineer then return to the promts so we can add more teammates or exit.
